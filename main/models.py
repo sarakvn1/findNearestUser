@@ -21,13 +21,13 @@ class BaseModel(models.Model):
         abstract = True
 
 
-class User(AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin,BaseModel):
     username = models.CharField(max_length=40, unique=True)
     name = models.CharField(max_length=100, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    location = models.JSONField()
+    location = models.JSONField(blank=True,null=True,default=dict)
     USERNAME_FIELD = 'username'
 
     objects = UserManager()
@@ -39,4 +39,4 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = _('users')
 
     def __str__(self):
-        return f"{self.id}-{self.name}"
+        return f"{self.id}-{self.username}"

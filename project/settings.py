@@ -34,7 +34,7 @@ DEBUG = True
 
 APPEND_SLASH = False
 
-ALLOWED_HOSTS = environ.get('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -185,26 +185,15 @@ CELERY_BROKER_URL = environ.get("CELERY_BROKER_URL")
 REDIS_URL = CELERY_BROKER_URL
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
-CELERY_WORKER_CONCURRENCY = 4
+
 CELERY_BEAT_SCHEDULE = {
     "daily_update_dashboard": {
-        "task": "dashboard.tasks.daily_update",
+        "task": "main.tasks.daily_users",
         "schedule": timedelta(hours=24),
         "options": {
             'expires': 10,
         },
     },
-    # algorithms
-    # "market_to_limit_order_algo": {
-    #     "task": "coordinator.tasks.market_to_limit_order_algo",
-    #     "schedule": timedelta(seconds=30),
-    # },
-    # "trailing_stop_order_algo": {
-    #     "task": "coordinator.tasks.trailing_stop_order_algo",
-    #     "schedule": timedelta(seconds=30),
-    # },
-    # update market
-
 }
 AUTH_USER_MODEL = 'main.User'
 REST_FRAMEWORK = {
@@ -219,3 +208,10 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'findclosest@gmail.com'
+EMAIL_HOST_PASSWORD = 'wahnvpredwvjmpro'
+EMAIL_USE_SSL = False
