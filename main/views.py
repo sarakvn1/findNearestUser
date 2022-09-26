@@ -11,7 +11,7 @@ from main.models import User
 from main.serializers import UserSerializer, FindClosestSerializer
 import fitz
 
-from main.tasks import send_email
+from main.tasks import send_email, generate_email
 
 
 class UserViewSet(ModelViewSet):
@@ -45,15 +45,3 @@ class FindNearestView(APIView):
         print(find_closest)
         return Response(find_closest)
 
-    def post(self, request):
-        today = datetime.date.today()
-        users = User.objects.filter(created_time__gt=today).values('username')
-        doc = fitz.open()
-        page = doc.new_page()
-        shape = page.new_shape()
-        t = ' '.join([str(elem) for elem in list(users)])
-        shape.insert_text((50, 70), t, fontname="helv", encoding=fitz.TEXT_ENCODING_LATIN)
-        shape.commit()
-        doc.save(f'sara-{today}.pdf')
-        send_email()
-        return Response("success")

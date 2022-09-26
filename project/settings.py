@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'drf_yasg',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -87,12 +88,24 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
+    'default': {
+
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+
+        'NAME': environ.get('POSTGRES_DB'),
+
+        'USER': environ.get('POSTGRES_USER'),
+
+        'PASSWORD': environ.get('POSTGRES_PASSWORD'),
+
+        'HOST': 'db',
+
+        'PORT': 5432,
+
+    }
+
+}
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -187,7 +200,7 @@ CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 CELERY_BEAT_SCHEDULE = {
-    "daily_update_dashboard": {
+    "daily_update": {
         "task": "main.tasks.daily_users",
         "schedule": timedelta(hours=24),
         "options": {
@@ -213,5 +226,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'findclosest@gmail.com'
-EMAIL_HOST_PASSWORD = 'wahnvpredwvjmpro'
+EMAIL_HOST_PASSWORD = 'rjwzouvadphrkrbs'
 EMAIL_USE_SSL = False

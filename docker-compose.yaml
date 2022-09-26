@@ -1,0 +1,68 @@
+version: '3.3'
+
+services:
+   find-nearest:
+      image: find-nearest
+      build:
+        dockerfile: ./Dockerfile
+        context: .
+      container_name: find-nearest
+      restart: always
+      env_file:
+        - ./settings.env
+      depends_on:
+        - redis
+      ports:
+        - "8080:8000"
+      command: ["uwsgi", "--callable", "application", "--wsgi-file", "./project/wsgi.py", "--processes=2", "--protocol=http", "-b 32768" ,  "--wsgi-disable-file-wrapper", "--socket-timeout=120"]
+      networks:
+        - find-nearest-network
+
+   find-nearest-worker:
+      image: find-nearest-worker
+      build:
+        dockerfile: ./Dockerfile
+        context: .
+      container_name: find-nearest-worker
+      restart: always
+      env_file:
+        - ./settings.env
+      depends_on:
+        - redis
+      command: ["worker" , "-A" , "project" , "worker" , "-B" , "--loglevel=debug"]
+      networks:
+        - find-nearest-network
+
+   redis:
+      image: "redis:alpine"
+      container_name: redis
+      command: redis-server
+      ports:
+         - "6389:6379"
+      volumes:
+         - redis-data:/data
+      environment:
+         - REDIS_REPLICATION_MODE=master
+      networks:
+         - rss-feed-network
+
+   db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - db:/var/lib/postgresql/data
+
+networks:
+  find-nearest-network:
+     driver: bridge
+
+volumes:
+  redis-data:
+  db:
+    driver: local
