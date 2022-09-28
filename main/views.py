@@ -26,22 +26,12 @@ class UserViewSet(ModelViewSet):
         serializer.save()
         return Response(serializer.data, status=200)
 
-    def location(self, request):
-        user_id = request.user.id
-        try:
-            user = User.objects.get(id=user_id)
-
-        except ObjectDoesNotExist:
-            pass
-
 
 class FindNearestView(APIView):
-    def get(self, request):
+    def post(self, request):
         serializer = FindClosestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         location = serializer.data
         data_list = User.objects.exclude(location={}).values('location', 'id')
         find_closest = closest(list(data_list), location)
-        print(find_closest)
         return Response(find_closest)
-

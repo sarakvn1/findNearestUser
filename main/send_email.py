@@ -16,14 +16,13 @@ import ssl
 from email.mime.multipart import MIMEMultipart
 
 
-
-def send_email():
+def generate_email_message():
     today = datetime.date.today()
     msg = MIMEMultipart()
     body = '''Hello,
-    This is list of new users
-    sincerely yours
-    '''
+        This is list of new users
+        sincerely yours
+        '''
     pdfname = f'new-users-{today}.pdf'
     msg.attach(MIMEText(body, 'plain'))
     binary_pdf = open(pdfname, 'rb')
@@ -33,15 +32,16 @@ def send_email():
     payload.add_header('Content-Decomposition', 'attachment', filename=pdfname)
     msg.attach(payload)
     text = msg.as_string()
+    return text
 
+
+def send_email():
+    text = generate_email_message()
     port = settings.EMAIL_PORT
     smtp_server = settings.EMAIL_HOST
     sender_email = settings.EMAIL_HOST_USER
     password = settings.EMAIL_HOST_PASSWORD
     receiver_email = 'sarakvn@gmail.com'
-    subject = 'Website registration'
-    body = 'Activate your account.'
-    # message = 'Subject: {}\n\n{}'.format(subject, body)
     context = ssl.create_default_context()
     with smtplib.SMTP(smtp_server, port) as server:
         server.ehlo()  # Can be omitted
@@ -49,6 +49,3 @@ def send_email():
         server.ehlo()  # Can be omitted
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, text)
-
-
-

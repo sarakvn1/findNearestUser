@@ -9,11 +9,3 @@ def distance(lat1, lon1, lat2, lon2):
 
 def closest(data, v):
     return min(data, key=lambda p: [d:=distance(v['lat'], v['lon'], p['location']['lat'], p['location']['lon']),p.update({"distance":d})])
-
-# min(data, key=lambda p: [d:=distance(v['lat'], v['lon'], p['location']['lat'], p['location']['lon']),p.update({"distance":d})])
-# tempDataList = [{'lat': 39.7612992, 'lon': -86.1519681},
-#                 {'lat': 39.762241, 'lon': -86.158436},
-#                 {'lat': 39.7622292, 'lon': -86.1578917}]
-
-v = {'lat': 39.7622290, 'lon': -86.1519750}
-# print(closest(tempDataList, v))
